@@ -1,8 +1,9 @@
 *
-!.github/
-!samples/
-!src/
+!.github/**
+!samples/**
+!src/**
 !.gitignore
 !*.hxml
 !haxelib.json
 !README.md
+!LICENSE.md
