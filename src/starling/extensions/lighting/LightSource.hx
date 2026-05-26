@@ -77,7 +77,7 @@ class LightSource extends Sprite3D
 
 	// helpers
 	private static var sMovement:Point = new Point();
-	private static var sInstances:Map<Stage, Array<LightSource>> = [];
+	private static var sInstances:Map<Stage, Array<LightSource>> = new Map();
 	private static var sRegion:Rectangle = new Rectangle();
 
 	/** Creates a new light source with the given properties. */
