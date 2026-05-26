@@ -11,7 +11,6 @@
 package starling.extensions.lighting;
 
 import openfl.geom.Point;
-import openfl.geom.Rectangle;
 import starling.display.Image;
 import starling.display.Sprite3D;
 import starling.display.Stage;
@@ -77,8 +76,7 @@ class LightSource extends Sprite3D
 
 	// helpers
 	private static var sMovement:Point = new Point();
-	private static var sInstances:Map<Stage, Array<LightSource>> = [];
-	private static var sRegion:Rectangle = new Rectangle();
+	private static var sInstances:Map<Stage, Array<LightSource>> = new Map();
 
 	/** Creates a new light source with the given properties. */
 	public function new(type:String = "point", color:UInt = 0xffffff, brightness:Float = 1.0)
@@ -279,11 +277,7 @@ class LightSource extends Sprite3D
 			out = [];
 		} else
 		{
-			#if (js || flash)
-            untyped out.length = 0;
-            #else
-			out.splice(0, out.length);
-			#end
+			out.resize(0);
 		}
 
 		var instances:Array<LightSource> = sInstances.get(stage);
