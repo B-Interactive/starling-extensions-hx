@@ -134,12 +134,15 @@ class LightEffect extends MeshEffect
 			);
 		}
 
-		/*fragmentShader.push(
+		fragmentShader.push(
+			"mov ft7, v5"              // prime v5 as VECTOR_4 in FS register map (forces AGALConverter Branch 2 for m33)
+		);
+		fragmentShader.push(
 			"m33 ft1.xyz, ft1.xyz, v5" // move N into local coords
 		);
 		fragmentShader.push(
-			"nrm ft1.xyz, ft1.xyz" // normalize N               ft1 = normal vector
-		);*/
+			"nrm ft1.xyz, ft1.xyz"     // normalize N               ft1 = normal vector
+		);
 
 		var numLights:Int = Std.int(MathUtil.min(_lights.length, LightStyle.MAX_NUM_LIGHTS));
 
