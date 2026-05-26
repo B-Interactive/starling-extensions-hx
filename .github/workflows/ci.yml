@@ -12,6 +12,9 @@ on:
     branches:
       - '**'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,7 +50,9 @@ jobs:
 
       - name: Install HashLink (hl target only)
         if: matrix.target == 'hl'
-        run: sudo apt-get update && sudo apt-get install -y hashlink
+        run: |
+          sudo apt-get update && sudo apt-get install -y hashlink          
+          haxelib install hashlink --always
 
       - name: Build HTML5
         if: matrix.target == 'html5'
