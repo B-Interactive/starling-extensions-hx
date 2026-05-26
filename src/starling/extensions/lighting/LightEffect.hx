@@ -367,24 +367,12 @@ class LightEffect extends MeshEffect
 	private function set_numLights(value:Int):Int
 	{
 		var oldNumLights:Int = _lights.length;
-
 		for (i in oldNumLights...value)
 		{
 			_lights[i] = new Light();
 		}
-
-		#if (js || flash)
-		untyped _lights.length = value;
-		#else
-		setArrayLength(_lights, value);
-		#end
+		_lights.resize(value);
 		return value;
-	}
-
-	private static inline function setArrayLength<T>(a:Array<Null<T>>, length:Int)
-	{
-		if (a.length > length) a.splice(length, a.length - length);
-		else a[length - 1] = null;
 	}
 
 	public function setLightAt(index:Int, type:String, color:UInt,
