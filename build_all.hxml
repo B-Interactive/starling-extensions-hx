@@ -1,0 +1,8 @@
+-cmd cd samples/dynamicLight
+-cmd haxelib run openfl build html5 -release -no-traces -Dwebgl1
+
+-cmd haxelib run openfl build cpp -release -no-traces
+
+-cmd haxelib run openfl build neko -release -no-traces
+
+-cmd haxelib run openfl build hl -release -no-traces
