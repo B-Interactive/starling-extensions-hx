@@ -56,8 +56,19 @@ class LightStyle extends MeshStyle
 	/** The highest supported value for 'shininess'. */
 	public static inline var MAX_SHININESS:Float = 32.0;
 
-	/** The maximum number of light sources that may be used. */
-	public static inline var MAX_NUM_LIGHTS:Int = 8;
+	/** The default soft cap on the number of light sources used per draw call.
+	 *
+	 *  <p>On non-Flash targets (HTML5/WebGL, native OpenGL, mobile), the lighting
+	 *  shader is now hand-written in GLSL and the practical ceiling is the GPU's
+	 *  reported `GL_MAX_FRAGMENT_UNIFORM_VECTORS` (typically &gt;= 224 vec4s, so
+	 *  &gt;= 100 lights). On the Flash target the AGAL v2 register table
+	 *  enforces a hard cap of 27 lights.</p>
+	 *
+	 *  <p>This constant is the documented default — actual programs are clamped
+	 *  at runtime to <code>min(MAX_NUM_LIGHTS, gpu_supported_max)</code>. Lights
+	 *  added beyond the resolved cap are silently ignored. Bumping this constant
+	 *  is safe; lowering it limits cache key space (which can be a feature). */
+	public static inline var MAX_NUM_LIGHTS:Int = 64;
 
 	private var _normalTexture:Texture;
 	private var _material:Material;

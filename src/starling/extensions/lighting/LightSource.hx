@@ -26,10 +26,14 @@ import starling.textures.Texture;
  *  otherwise, the mesh will be rendered in pure black. You can add the objects anywhere to
  *  the display list: the style will always find them.</p>
  *  
- *  <p>Beware: the maximum number of active lights is 8: any more will be ignored.
- *  Furthermore, the number of lights is limited by the Context3D profile: e.g.
- *  <code>baselineConstrained</code> can't cope with more than one directional and one
- *  ambient light. Be sure to test your scenes in all the profiles you want to support!</p>
+ *  <p>The default soft cap on simultaneously active lights is
+ *  <code>LightStyle.MAX_NUM_LIGHTS</code> (currently 64). On non-Flash targets
+ *  (HTML5/WebGL, native OpenGL, mobile) the actual ceiling is determined at
+ *  runtime from <code>GL_MAX_FRAGMENT_UNIFORM_VECTORS</code> and is usually well
+ *  in excess of 100. On Flash the AGAL v2 register table enforces a hard cap of
+ *  27 lights. Excess lights are silently clamped. Old AIR profiles
+ *  (e.g. <code>baselineConstrained</code>) impose additional limits; be sure to
+ *  test your scenes in all the profiles you want to support.</p>
  *
  *  <p>There are three different types of light sources:</p>
  *
