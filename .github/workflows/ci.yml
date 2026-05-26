@@ -1,0 +1,58 @@
+# Build status badge for README.md:
+# [![Build Status](https://github.com/CrazyFlasher/starling-extensions-hx/actions/workflows/ci.yml/badge.svg)](https://github.com/CrazyFlasher/starling-extensions-hx/actions/workflows/ci.yml)
+
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [html5, hl]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.7
+
+      - name: Cache haxelib
+        uses: actions/cache@v4
+        with:
+          path: ~/.haxelib
+          key: ${{ runner.os }}-haxelib-openfl-lime-starling
+
+      - name: Install haxelibs
+        run: |
+          haxelib install openfl --always
+          haxelib install lime --always
+          haxelib install starling --always
+
+      - name: Run Lime setup
+        run: haxelib run lime setup -alias -y
+
+      - name: Install HashLink (hl target only)
+        if: matrix.target == 'hl'
+        run: sudo apt-get update && sudo apt-get install -y hashlink
+
+      - name: Build HTML5
+        if: matrix.target == 'html5'
+        run: haxe build_html5.hxml
+
+      - name: Build HashLink
+        if: matrix.target == 'hl'
+        working-directory: samples/dynamicLight
+        run: haxelib run lime build hl

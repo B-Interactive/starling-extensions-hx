@@ -1,4 +1,4 @@
-# Starling OpenFL Extensions [![Build Status](https://travis-ci.org/CrazyFlasher/starling-extensions-hx.svg?branch=master)](https://travis-ci.org/CrazyFlasher/starling-extensions-hx)
+# Starling OpenFL Extensions [![Build Status](https://github.com/B-Interactive/starling-extensions-hx/actions/workflows/ci.yml/badge.svg)](https://github.com/B-Interactive/starling-extensions-hx/actions/workflows/ci.yml)
 
 `haxelib install starling-extensions-hx`
 

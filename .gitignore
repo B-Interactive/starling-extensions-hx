@@ -1,8 +1,8 @@
 *
+!.github/
 !samples/
 !src/
 !.gitignore
-!.travis.yml
 !*.hxml
 !haxelib.json
 !README.md
