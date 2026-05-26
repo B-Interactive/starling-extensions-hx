@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
+        uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
 
@@ -44,6 +44,7 @@ jobs:
           haxelib install openfl --always
           haxelib install lime --always
           haxelib install starling --always
+          
 
       - name: Run Lime setup
         run: haxelib run lime setup -alias -y
@@ -51,8 +52,8 @@ jobs:
       - name: Install HashLink (hl target only)
         if: matrix.target == 'hl'
         run: |
-          sudo apt-get update && sudo apt-get install -y hashlink          
           haxelib install hashlink --always
+          haxelib run hashlink install
 
       - name: Build HTML5
         if: matrix.target == 'html5'
