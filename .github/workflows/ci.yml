@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@v2
@@ -34,7 +34,7 @@ jobs:
           haxe-version: 4.3.7
 
       - name: Cache haxelib
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.haxelib
           key: ${{ runner.os }}-haxelib-openfl-lime-starling
@@ -42,18 +42,15 @@ jobs:
       - name: Install haxelibs
         run: |
           haxelib install openfl --always
-          haxelib install lime --always
-          haxelib install starling --always
-          
+          haxelib install starling --always          
 
-      - name: Run Lime setup
-        run: haxelib run lime setup -alias -y
+      - name: Run OpenFL setup
+        run: haxelib run openfl setup -alias -y
 
       - name: Install HashLink (hl target only)
         if: matrix.target == 'hl'
         run: |
           haxelib install hashlink --always
-          haxelib run hashlink install
 
       - name: Build HTML5
         if: matrix.target == 'html5'
