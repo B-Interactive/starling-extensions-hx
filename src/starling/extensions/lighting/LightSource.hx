@@ -71,12 +71,14 @@ class LightSource extends Sprite3D
 	public var showLightBulb(get, set):Texture;
 	public var type(get, set):String;
 	public var isActive(get, set):Bool;
+	public var lightGroup(get, set):Int;
 
 	private var _type:String;
 	private var _color:UInt;
 	private var _active:Bool;
 	private var _brightness:Float;
 	private var _lightBulb:Image;
+	private var _lightGroup:Int;
 
 	// helpers
 	private static var sMovement:Point = new Point();
@@ -90,6 +92,7 @@ class LightSource extends Sprite3D
 		_color = color;
 		_active = true;
 		_brightness = brightness;
+		_lightGroup = 0;
 
 		addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
@@ -270,11 +273,26 @@ class LightSource extends Sprite3D
 	}
 
 	/** @private
-     *  Returns all active (i.e. active is <code>true</code> and brightness > 0)
-     *  light sources on the stage. */
+	    *  Returns all active (i.e. active is <code>true</code> and brightness > 0)
+	    *  light sources on the stage.
+	    *
+	    *  <p>The <code>groupFilter</code> is the <code>lightGroup</code> value of the
+	    *  mesh requesting illumination. A light is included when any of the following
+	    *  hold:</p>
+	    *
+	    *  <ul>
+	    *    <li><code>groupFilter == -1</code> — explicit "no filter" (legacy callers).</li>
+	    *    <li><code>light.lightGroup == 0</code> — the light is global / ambient and
+	    *        illuminates every mesh.</li>
+	    *    <li><code>groupFilter == 0</code> — the mesh is unfiltered (default
+	    *        <code>LightStyle.lightGroup</code>) and accepts every light. Backward
+	    *        compatible with meshes that never opted in to lane isolation.</li>
+	    *    <li><code>light.lightGroup == groupFilter</code> — the light's lane matches
+	    *        the mesh's lane.</li>
+	    *  </ul> */
 	@:allow(starling.extensions.lighting)
 	private static function getActiveInstances(
-		stage:Stage, out:Array<LightSource> = null):Array<LightSource>
+		stage:Stage, out:Array<LightSource> = null, groupFilter:Int = -1):Array<LightSource>
 	{
 		if (out == null)
 		{
@@ -292,13 +310,34 @@ class LightSource extends Sprite3D
 				var light:LightSource = instances[i];
 				if (light._brightness > 0 && light._active)
 				{
-					out[out.length] = light;
+					// A light is included if:
+					//   - it's global (lightGroup == 0), OR
+					//   - the mesh is unfiltered (groupFilter == 0 or -1), OR
+					//   - the light's group matches the mesh's group.
+					if (light._lightGroup == 0
+						|| groupFilter == 0
+						|| groupFilter == -1
+						|| light._lightGroup == groupFilter)
+					{
+						out[out.length] = light;
+					}
 				}
 			}
 		}
 
 		return out;
 	}
+
+	/** The light group this source belongs to.
+	    *
+	    *  <p>Group <code>0</code> is global — it illuminates every mesh regardless of
+	    *  the mesh's own <code>LightStyle.lightGroup</code>.  Group <code>N > 0</code>
+	    *  is lane-specific: it only illuminates meshes whose
+	    *  <code>LightStyle.lightGroup == N</code>.</p>
+	    *
+	    *  @default 0 */
+	private function get_lightGroup():Int { return _lightGroup; }
+	private function set_lightGroup(value:Int):Int { return _lightGroup = value; }
 
 	/** Creates a new point light with the given properties. */
 	public static function createPointLight(color:UInt = 0xffffff, brightness:Float = 1.0):LightSource

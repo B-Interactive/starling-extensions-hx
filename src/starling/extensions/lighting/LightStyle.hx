@@ -50,6 +50,7 @@ class LightStyle extends MeshStyle
 	public var diffuseRatio(get, set):Float;
 	public var specularRatio(get, set):Float;
 	public var shininess(get, set):Float;
+	public var lightGroup(get, set):Int;
 
 	public static var VERTEX_FORMAT:VertexDataFormat = LightEffect.VERTEX_FORMAT;
 
@@ -72,6 +73,7 @@ class LightStyle extends MeshStyle
 
 	private var _normalTexture:Texture;
 	private var _material:Material;
+	private var _lightGroup:Int;
 
 	// helpers
 	private var sPoint:Point = new Point();
@@ -88,6 +90,7 @@ class LightStyle extends MeshStyle
 		super();
 		_normalTexture = normalTexture;
 		_material = new Material();
+		_lightGroup = 0;
 	}
 
 	/** Sets the texture coordinates of the specified vertex within the normal texture
@@ -125,6 +128,7 @@ class LightStyle extends MeshStyle
 			var litMeshStyle:LightStyle = cast (meshStyle, LightStyle);
 			_normalTexture = litMeshStyle._normalTexture;
 			_material.copyFrom(litMeshStyle._material);
+			_lightGroup = litMeshStyle._lightGroup;
 		}
 
 		super.copyFrom(meshStyle);
@@ -180,6 +184,8 @@ class LightStyle extends MeshStyle
 		{
 			litMeshStyle = cast (meshStyle, LightStyle);
 
+			if (litMeshStyle._lightGroup != _lightGroup) return false;
+
 			if (super.canBatchWith(meshStyle))
 			{
 				var newNormalTexture:Texture = litMeshStyle._normalTexture;
@@ -215,7 +221,7 @@ class LightStyle extends MeshStyle
 		lightEffect.normalTexture = _normalTexture;
 
 		var stage:Stage = target.stage != null ? target.stage : Starling.current.stage;
-		var lights:Array<LightSource> = LightSource.getActiveInstances(stage, sLights);
+		var lights:Array<LightSource> = LightSource.getActiveInstances(stage, sLights, _lightGroup);
 		lightEffect.numLights = lights.length;
 
 		// get transformation matrix from the stage to the current coordinate system
@@ -289,6 +295,18 @@ class LightStyle extends MeshStyle
 			vertexData.setFloat(i, "zScale", 1);
 		}
 	}
+
+	/** The light group this mesh style belongs to.
+	    *
+	    *  <p>Group <code>0</code> accepts only global lights (those with
+	    *  <code>LightSource.lightGroup == 0</code>).  Group <code>N > 0</code>
+	    *  accepts global lights <em>and</em> the lane-specific light whose
+	    *  <code>LightSource.lightGroup == N</code>.  This is the normal setting
+	    *  for lane grid meshes.</p>
+	    *
+	    *  @default 0 */
+	private function get_lightGroup():Int { return _lightGroup; }
+	private function set_lightGroup(value:Int):Int { return _lightGroup = value; }
 
 	/** The texture encoding the surface normals. */
 	private function get_normalTexture():Texture
