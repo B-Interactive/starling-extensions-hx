@@ -643,7 +643,11 @@ class LightEffect extends MeshEffect
 			context.setProgramConstantsFromVector(
 				Context3DProgramType.FRAGMENT, FC_LIGHT_BASE + 2 * i, sVector);
 
-			Color.toVector(light.color, sVector);
+			// Extract RGB as floats and scale by brightness, allowing values > 1.0 to reach the shader.
+			sVector[0] = ((light.color >> 16) & 0xff) / 255.0 * light.brightness; // R
+			sVector[1] = ((light.color >>  8) & 0xff) / 255.0 * light.brightness; // G
+			sVector[2] = ( light.color        & 0xff) / 255.0 * light.brightness; // B
+			sVector[3] = 1.0;
 			context.setProgramConstantsFromVector(
 				Context3DProgramType.FRAGMENT, FC_LIGHT_BASE + 1 + 2 * i, sVector);
 		}
@@ -755,6 +759,7 @@ class LightEffect extends MeshEffect
 	}
 
 	public function setLightAt(index:Int, type:String, color:UInt,
+							   brightness:Float = 1.0,
 							   positionOrDirection:Vector3D):Void
 	{
 		if (index >= numLights)
@@ -765,6 +770,7 @@ class LightEffect extends MeshEffect
 		var light:Light = _lights[index];
 		light.type = type;
 		light.color = color;
+		light.brightness = brightness;
 		light.x = positionOrDirection.x;
 		light.y = positionOrDirection.y;
 		light.z = positionOrDirection.z;
@@ -802,11 +808,15 @@ class Light
 	public var z:Float;
 	public var color:UInt;
 	public var type:String;
+	/** Brightness multiplier for this light. Values > 1.0 are allowed and widen the bright highlight. @default 1.0 */
+	public var brightness:Float = 1.0;
 
-	public function new(color:UInt = 0xffffff, type:String = "point")
+	public function new(color:UInt = 0xffffff, type:String = "point",
+						brightness:Float = 1.0)
 	{
 		x = y = z = 0.0;
 		this.color = color;
 		this.type = type;
+		this.brightness = brightness;
 	}
 }

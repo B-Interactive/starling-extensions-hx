@@ -243,7 +243,6 @@ class LightStyle extends MeshStyle
 		while (i < lights.length)
 		{
 			var light:LightSource = lights[i];
-			var lightColor:Int = Color.multiply(light.color, light.brightness);
 			var lightPosOrDir:Vector3D;
 
 			// get transformation matrix from the light to the current coordinate system
@@ -266,8 +265,8 @@ class LightStyle extends MeshStyle
 				}
 			}
 
-			// update light properties
-			lightEffect.setLightAt(i, light.type, lightColor, lightPosOrDir);
+			// Pass colour and brightness separately so brightness > 1.0 is not clamped.
+			lightEffect.setLightAt(i, light.type, light.color, light.brightness, lightPosOrDir);
 			++i;
 		}
 

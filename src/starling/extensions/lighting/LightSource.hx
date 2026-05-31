@@ -171,7 +171,7 @@ class LightSource extends Sprite3D
 		return value;
 	}
 
-	/** The brightness of the light source in the range 0-1. @default 1.0 */
+	/** The brightness of the light source. Values > 1.0 are supported and widen the bright highlight. @default 1.0 */
 	private function get_brightness():Float
 	{
 		return _brightness;
