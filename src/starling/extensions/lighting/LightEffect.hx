@@ -234,10 +234,13 @@ class LightEffect extends MeshEffect
 		var sb:StringBuf = new StringBuf();
 
 		// ── Header / precision ──────────────────────────────────────────────
+		// Only emit precision qualifiers on GL ES / WebGL.
+		sb.add("#ifdef GL_ES\n");
 		sb.add("#ifdef GL_FRAGMENT_PRECISION_HIGH\n");
 		sb.add("precision highp float;\n");
 		sb.add("#else\n");
 		sb.add("precision mediump float;\n");
+		sb.add("#endif\n");
 		sb.add("#endif\n");
 
 		// ── Varyings (must match what the AGAL vertex shader emits via AGALConverter) ─
